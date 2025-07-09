@@ -102,12 +102,16 @@ func Init() {
 
 ```go
 type Equipment struct {
-    gorm.Model
-    Name        string `gorm:"size:100;not null"`
-    Location    string `gorm:"size:50"`
-    Status      string `gorm:"size:20"`
-    Description string `gorm:"type:text"`
+	ID          uint           `json:"id"`
+	Name        string         `json:"name"        gorm:"size:100;not null"`
+	Location    string         `json:"location"    gorm:"size:50"`
+	Status      string         `json:"status"      gorm:"size:20"`
+	Description string         `json:"description" gorm:"type:text"`
+	CreatedAt   time.Time      `json:"created_at"`
+	UpdatedAt   time.Time      `json:"updated_at"`
+	DeletedAt   gorm.DeletedAt `json:"-"           gorm:"index"`
 }
+
 ```
 
 ---

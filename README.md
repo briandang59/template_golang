@@ -53,29 +53,26 @@ be_scada/
 
 ```go
 func main() {
-    _ = godotenv.Load()
-    config.Init()
+	_ = godotenv.Load()
+	config.Init()
 
-    repo := repository.NewEquipmentRepo()
-    svc := service.NewEquipmentService(repo)
-    hdl := handler.NewEquipmentHandler(svc)
+	eqRepo := repository.NewEquipmentRepo()
+	eqSvc := service.NewEquipmentService(eqRepo)
+	eqHdl := handler.NewEquipmentHandler(eqSvc)
 
-    r := gin.Default()
+	deps := &handler.Dependencies{
+		Equipment: eqHdl,
+	}
 
-    api := r.Group("/api")
-    {
-        api.GET("/equipment", hdl.GetAll)
-        api.GET("/equipment/:id", hdl.Get)
-        api.POST("/equipment", hdl.Create)
-        api.PUT("/equipment/:id", hdl.Update)
-        api.DELETE("/equipment/:id", hdl.Delete)
-    }
+	r := gin.Default()
 
-    hub := ws.NewHub()
-    go hub.Run()
-    r.GET("/ws", ws.ServeWs(hub))
+	routes.RegisterRoutes(r, deps)
 
-    log.Fatal(r.Run(":" + os.Getenv("PORT")))
+	hub := ws.NewHub()
+	go hub.Run()
+	r.GET("/ws", ws.ServeWs(hub))
+
+	log.Fatal(r.Run(":" + os.Getenv("PORT")))
 }
 ```
 

@@ -20,7 +20,6 @@ func main() {
 	_ = godotenv.Load()
 	config.Init()
 
-	// khởi tạo repository / service / handler
 	eqRepo := repository.NewEquipmentRepo()
 	eqSvc := service.NewEquipmentService(eqRepo)
 	eqHdl := handler.NewEquipmentHandler(eqSvc)
@@ -33,7 +32,6 @@ func main() {
 
 	routes.RegisterRoutes(r, deps)
 
-	// WebSocket
 	hub := ws.NewHub()
 	go hub.Run()
 	r.GET("/ws", ws.ServeWs(hub))

@@ -1,0 +1,46 @@
+# Go build output
+/bin/
+/build/
+/dist/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go workspace
+*.log
+*.tmp
+*.swp
+*.swo
+*.DS_Store
+
+# Go modules
+vendor/
+go.sum
+
+# IDE/editor config
+.vscode/
+.idea/
+*.code-workspace
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Git config backup
+*.orig
+
+# Docker
+*.env
+docker-compose.override.yml
+.env.*
+.env.local
+.env.development
+.env.production
+
+# PostgreSQL volume (if mounted locally)
+pg-data/
+pgdata/

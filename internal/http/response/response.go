@@ -11,7 +11,6 @@ type Pagination struct {
 	Total    int `json:"total" example:"100"`
 }
 
-// Body is the generic response struct used in actual code
 type Body struct {
 	Code       int         `json:"code" example:"200"`
 	Message    string      `json:"message" example:"success"`
@@ -19,7 +18,6 @@ type Body struct {
 	Pagination *Pagination `json:"pagination,omitempty"`
 }
 
-// Success sends a successful response
 func Success(c *gin.Context, data interface{}, pg *Pagination) {
 	c.JSON(200, Body{
 		Code:       200,
@@ -29,7 +27,6 @@ func Success(c *gin.Context, data interface{}, pg *Pagination) {
 	})
 }
 
-// Error sends an error response
 func Error(c *gin.Context, code int, msg string) {
 	c.JSON(code, Body{
 		Code:    code,
@@ -38,15 +35,11 @@ func Error(c *gin.Context, code int, msg string) {
 	})
 }
 
-// ---------- BELOW: Structs for Swagger documentation only ----------
-
-// ErrorResponse is used for Swagger to describe error structure
 type ErrorResponse struct {
 	Code    int    `json:"code" example:"400"`
 	Message string `json:"message" example:"error message"`
 }
 
-// FactoryListResponse describes a list of factories (for GetAll)
 type FactoryListResponse struct {
 	Code       int             `json:"code" example:"200"`
 	Message    string          `json:"message" example:"success"`
@@ -54,8 +47,20 @@ type FactoryListResponse struct {
 	Pagination *Pagination     `json:"pagination"`
 }
 
-// FactoryResponse describes a single factory (for Create, Update)
 type FactoryResponse struct {
+	Code    int           `json:"code" example:"200"`
+	Message string        `json:"message" example:"success"`
+	Data    model.Factory `json:"data"`
+}
+
+type DepartmentListResponse struct {
+	Code       int             `json:"code" example:"200"`
+	Message    string          `json:"message" example:"success"`
+	Data       []model.Factory `json:"data"`
+	Pagination *Pagination     `json:"pagination"`
+}
+
+type DepartmentResponse struct {
 	Code    int           `json:"code" example:"200"`
 	Message string        `json:"message" example:"success"`
 	Data    model.Factory `json:"data"`

@@ -41,6 +41,7 @@ func Init() {
 func autoMigrate() {
 	if err := DB.AutoMigrate(
 		&model.Factory{},
+		&model.Department{},
 	); err != nil {
 		log.Fatalf("🚫 AutoMigrate lỗi: %v", err)
 	}

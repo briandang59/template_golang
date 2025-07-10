@@ -13,9 +13,10 @@ func NewFactoryService(r repository.FactoryRepository) *FactoryService {
 	return &FactoryService{repo: r}
 }
 
-func (s *FactoryService) GetAll(page, pageSize int) ([]model.Factory, int64, error) {
-	return s.repo.FindAll(page, pageSize)
+func (s *FactoryService) GetAll(page, pageSize int, preloadFields []string) ([]model.Factory, int64, error) {
+	return s.repo.FindAll(page, pageSize, preloadFields)
 }
+
 func (s *FactoryService) Create(f *model.Factory) error {
 	return s.repo.Create(f)
 }

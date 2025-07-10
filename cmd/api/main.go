@@ -33,8 +33,13 @@ func main() {
 	factorySvc := service.NewFactoryService(factoryRepo)
 	factoryHdl := handler.NewFactoryHandler(factorySvc)
 
+	dpmRepo := repository.NewDepartmentRepo()
+	dpmySvc := service.NewDepartmentService(dpmRepo)
+	dpmHdl := handler.NewDepartmentHandler(dpmySvc)
+
 	deps := &handler.Dependencies{
-		Factory: factoryHdl,
+		Factory:    factoryHdl,
+		Department: dpmHdl,
 	}
 
 	r := gin.Default()

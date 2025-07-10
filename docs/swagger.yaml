@@ -1,5 +1,28 @@
 basePath: /
 definitions:
+  model.Department:
+    properties:
+      active:
+        type: boolean
+      code:
+        type: string
+      created_at:
+        type: string
+      factory:
+        $ref: '#/definitions/model.Factory'
+      id:
+        type: integer
+      manager:
+        type: integer
+      name_en:
+        type: string
+      name_vn:
+        type: string
+      name_zh:
+        type: string
+      updated_at:
+        type: string
+    type: object
   model.Factory:
     properties:
       active:
@@ -10,6 +33,10 @@ definitions:
         type: string
       created_at:
         type: string
+      departments:
+        items:
+          $ref: '#/definitions/model.Department'
+        type: array
       id:
         type: integer
       location:
@@ -34,6 +61,32 @@ definitions:
         type: string
       pagination:
         $ref: '#/definitions/response.Pagination'
+    type: object
+  response.DepartmentListResponse:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/model.Factory'
+        type: array
+      message:
+        example: success
+        type: string
+      pagination:
+        $ref: '#/definitions/response.Pagination'
+    type: object
+  response.DepartmentResponse:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        $ref: '#/definitions/model.Factory'
+      message:
+        example: success
+        type: string
     type: object
   response.ErrorResponse:
     properties:
@@ -89,6 +142,122 @@ info:
   title: SCADA API
   version: "1.0"
 paths:
+  /departments:
+    get:
+      consumes:
+      - application/json
+      description: Get list of departments with pagination
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.DepartmentListResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Get all departments
+      tags:
+      - Department
+    post:
+      consumes:
+      - application/json
+      description: Create a department with given payload
+      parameters:
+      - description: Department Data
+        in: body
+        name: department
+        required: true
+        schema:
+          $ref: '#/definitions/model.Department'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.DepartmentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Create a new department
+      tags:
+      - Department
+  /departments/{id}:
+    delete:
+      description: Delete a department by ID
+      parameters:
+      - description: Department ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Department'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Body'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Body'
+      summary: Delete a department
+      tags:
+      - Department
+    patch:
+      consumes:
+      - application/json
+      description: Update a department partially by ID
+      parameters:
+      - description: Department ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Partial update fields
+        in: body
+        name: body
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.DepartmentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Update a department (partial)
+      tags:
+      - Department
   /factories:
     get:
       consumes:

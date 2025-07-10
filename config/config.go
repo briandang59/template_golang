@@ -40,7 +40,7 @@ func Init() {
 
 func autoMigrate() {
 	if err := DB.AutoMigrate(
-		&model.Equipment{},
+		&model.Factory{},
 	); err != nil {
 		log.Fatalf("🚫 AutoMigrate lỗi: %v", err)
 	}

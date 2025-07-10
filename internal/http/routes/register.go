@@ -11,6 +11,5 @@ func RegisterRoutes(r *gin.Engine, deps *handler.Dependencies) {
 	api := r.Group("/api")
 
 	// Equipment
-	EquipmentRoutes(api, deps.Equipment)
-
+	FactoryRoutes(api, deps.Factory)
 }

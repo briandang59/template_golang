@@ -20,12 +20,12 @@ func main() {
 	_ = godotenv.Load()
 	config.Init()
 
-	eqRepo := repository.NewEquipmentRepo()
-	eqSvc := service.NewEquipmentService(eqRepo)
-	eqHdl := handler.NewEquipmentHandler(eqSvc)
+	factoryRepo := repository.NewFactoryRepo()
+	factorySvc := service.NewFactoryService(factoryRepo)
+	factoryHdl := handler.NewFactoryHandler(factorySvc)
 
 	deps := &handler.Dependencies{
-		Equipment: eqHdl,
+		Factory: factoryHdl,
 	}
 
 	r := gin.Default()

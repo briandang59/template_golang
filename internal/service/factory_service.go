@@ -27,3 +27,7 @@ func (s *FactoryService) UpdatePartial(id uint, data map[string]interface{}) err
 func (s *FactoryService) GetByID(id uint) (*model.Factory, error) {
 	return s.repo.FindByID(id)
 }
+
+func (s *FactoryService) Delete(id uint) (*model.Factory, error) {
+	return s.repo.Delete(id)
+}

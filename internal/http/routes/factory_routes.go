@@ -9,5 +9,5 @@ func FactoryRoutes(rg *gin.RouterGroup, h *handler.FactoryHandler) {
 	rg.GET("/factories", h.GetAll)
 	rg.POST("/factories", h.Create)
 	rg.PATCH("/factories/:id", h.Update)
-
+	rg.DELETE("/factories/:id", h.Delete)
 }

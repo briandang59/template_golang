@@ -23,6 +23,18 @@ definitions:
       updated_at:
         type: string
     type: object
+  response.Body:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data: {}
+      message:
+        example: success
+        type: string
+      pagination:
+        $ref: '#/definitions/response.Pagination'
+    type: object
   response.ErrorResponse:
     properties:
       code:
@@ -135,6 +147,30 @@ paths:
       tags:
       - Factory
   /factories/{id}:
+    delete:
+      description: Delete a factory by ID
+      parameters:
+      - description: Factory ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Factory'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Body'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Body'
+      summary: Delete a factory
+      tags:
+      - Factory
     patch:
       consumes:
       - application/json

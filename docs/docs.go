@@ -103,6 +103,42 @@ const docTemplate = `{
             }
         },
         "/factories/{id}": {
+            "delete": {
+                "description": "Delete a factory by ID",
+                "tags": [
+                    "Factory"
+                ],
+                "summary": "Delete a factory",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Factory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Factory"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Body"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.Body"
+                        }
+                    }
+                }
+            },
             "patch": {
                 "description": "Update a factory partially by ID",
                 "consumes": [
@@ -189,6 +225,23 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "string"
+                }
+            }
+        },
+        "response.Body": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "data": {},
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/response.Pagination"
                 }
             }
         },

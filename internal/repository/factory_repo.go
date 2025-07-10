@@ -10,6 +10,7 @@ type FactoryRepository interface {
 	FindAll(page, pageSize int) ([]model.Factory, int64, error)
 	UpdatePartial(id uint, data map[string]interface{}) error
 	FindByID(id uint) (*model.Factory, error)
+	Delete(id uint) (*model.Factory, error)
 }
 
 type factoryRepo struct{}
@@ -23,10 +24,10 @@ func (r *factoryRepo) FindAll(page, pageSize int) ([]model.Factory, int64, error
 	var total int64
 	offset := (page - 1) * pageSize
 
-	if err := config.DB.Model(&model.Factory{}).Count(&total).Error; err != nil {
+	if err := config.DB.Model(&model.Factory{}).Where("active = ?", true).Count(&total).Error; err != nil {
 		return nil, 0, err
 	}
-	if err := config.DB.Limit(pageSize).Offset(offset).Find(&list).Error; err != nil {
+	if err := config.DB.Where("active = ?", true).Limit(pageSize).Offset(offset).Find(&list).Error; err != nil {
 		return nil, 0, err
 	}
 	return list, total, nil
@@ -44,5 +45,19 @@ func (r *factoryRepo) FindByID(id uint) (*model.Factory, error) {
 	if err := config.DB.First(&factory, id).Error; err != nil {
 		return nil, err
 	}
+	return &factory, nil
+}
+
+func (r *factoryRepo) Delete(id uint) (*model.Factory, error) {
+	var factory model.Factory
+
+	if err := config.DB.First(&factory, id).Error; err != nil {
+		return nil, err
+	}
+
+	if err := config.DB.Delete(&factory).Error; err != nil {
+		return nil, err
+	}
+
 	return &factory, nil
 }

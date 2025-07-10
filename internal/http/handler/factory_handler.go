@@ -114,3 +114,28 @@ func (h *FactoryHandler) Update(c *gin.Context) {
 
 	c.JSON(http.StatusOK, factory)
 }
+
+// Delete godoc
+// @Summary Delete a factory
+// @Description Delete a factory by ID
+// @Tags Factory
+// @Param id path int true "Factory ID"
+// @Success 200 {object} model.Factory
+// @Failure 400 {object} response.Body
+// @Failure 404 {object} response.Body
+// @Router /factories/{id} [delete]
+func (h *FactoryHandler) Delete(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		response.Error(c, http.StatusBadRequest, "Invalid ID")
+		return
+	}
+
+	deletedFactory, err := h.svc.Delete(uint(id))
+	if err != nil {
+		response.Error(c, http.StatusNotFound, err.Error())
+		return
+	}
+
+	response.Success(c, deletedFactory, nil)
+}

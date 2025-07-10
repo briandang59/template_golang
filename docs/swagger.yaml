@@ -1,0 +1,174 @@
+basePath: /
+definitions:
+  model.Factory:
+    properties:
+      active:
+        type: boolean
+      address:
+        type: string
+      code:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      location:
+        type: string
+      name_en:
+        type: string
+      name_vn:
+        type: string
+      name_zh:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  response.ErrorResponse:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: error message
+        type: string
+    type: object
+  response.FactoryListResponse:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/model.Factory'
+        type: array
+      message:
+        example: success
+        type: string
+      pagination:
+        $ref: '#/definitions/response.Pagination'
+    type: object
+  response.FactoryResponse:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        $ref: '#/definitions/model.Factory'
+      message:
+        example: success
+        type: string
+    type: object
+  response.Pagination:
+    properties:
+      page:
+        example: 1
+        type: integer
+      page_size:
+        example: 10
+        type: integer
+      total:
+        example: 100
+        type: integer
+    type: object
+host: localhost:8080/api
+info:
+  contact: {}
+  description: This is a SCADA system backend.
+  title: SCADA API
+  version: "1.0"
+paths:
+  /factories:
+    get:
+      consumes:
+      - application/json
+      description: Get list of factories with pagination
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.FactoryListResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Get all factories
+      tags:
+      - Factory
+    post:
+      consumes:
+      - application/json
+      description: Create a factory with given payload
+      parameters:
+      - description: Factory Data
+        in: body
+        name: factory
+        required: true
+        schema:
+          $ref: '#/definitions/model.Factory'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.FactoryResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Create a new factory
+      tags:
+      - Factory
+  /factories/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Update a factory partially by ID
+      parameters:
+      - description: Factory ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Partial update fields
+        in: body
+        name: body
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.FactoryResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Update a factory (partial)
+      tags:
+      - Factory
+schemes:
+- http
+swagger: "2.0"

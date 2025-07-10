@@ -1,10 +1,19 @@
+// @title SCADA API
+// @version 1.0
+// @description This is a SCADA system backend.
+// @host localhost:8080/api
+// @BasePath /
+// @schemes http
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-
 	"log"
 	"os"
+
+	_ "github.com/briandang59/be_scada/docs"
+	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 
 	"github.com/joho/godotenv"
 
@@ -35,6 +44,6 @@ func main() {
 	hub := ws.NewHub()
 	go hub.Run()
 	r.GET("/ws", ws.ServeWs(hub))
-
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	log.Fatal(r.Run(":" + os.Getenv("PORT")))
 }

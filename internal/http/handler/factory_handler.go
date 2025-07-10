@@ -18,6 +18,17 @@ func NewFactoryHandler(s *service.FactoryService) *FactoryHandler {
 	return &FactoryHandler{svc: s}
 }
 
+// GetAll godoc
+// @Summary Get all factories
+// @Description Get list of factories with pagination
+// @Tags Factory
+// @Accept json
+// @Produce json
+// @Param page query int false "Page number"
+// @Param page_size query int false "Items per page"
+// @Success 200 {object} response.FactoryListResponse
+// @Failure 500 {object} response.ErrorResponse
+// @Router /factories [get]
 func (h *FactoryHandler) GetAll(c *gin.Context) {
 	// ── 1. Lấy query params, gán mặc định ─────────────────────
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
@@ -44,6 +55,17 @@ func (h *FactoryHandler) GetAll(c *gin.Context) {
 	})
 }
 
+// Create godoc
+// @Summary Create a new factory
+// @Description Create a factory with given payload
+// @Tags Factory
+// @Accept json
+// @Produce json
+// @Param factory body model.Factory true "Factory Data"
+// @Success 201 {object} response.FactoryResponse
+// @Failure 400 {object} response.ErrorResponse
+// @Failure 500 {object} response.ErrorResponse
+// @Router /factories [post]
 func (h *FactoryHandler) Create(c *gin.Context) {
 	var body model.Factory
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -56,6 +78,19 @@ func (h *FactoryHandler) Create(c *gin.Context) {
 	}
 	c.JSON(http.StatusCreated, body)
 }
+
+// Update godoc
+// @Summary Update a factory (partial)
+// @Description Update a factory partially by ID
+// @Tags Factory
+// @Accept json
+// @Produce json
+// @Param id path int true "Factory ID"
+// @Param body body object true "Partial update fields"
+// @Success 200 {object} response.FactoryResponse
+// @Failure 400 {object} response.ErrorResponse
+// @Failure 500 {object} response.ErrorResponse
+// @Router /factories/{id} [patch]
 func (h *FactoryHandler) Update(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 

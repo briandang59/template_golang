@@ -42,6 +42,8 @@ func autoMigrate() {
 	if err := DB.AutoMigrate(
 		&model.Factory{},
 		&model.Department{},
+		&model.EquipmentType{},
+		&model.Equipment{},
 	); err != nil {
 		log.Fatalf("🚫 AutoMigrate lỗi: %v", err)
 	}

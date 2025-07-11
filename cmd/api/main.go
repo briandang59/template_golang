@@ -37,9 +37,14 @@ func main() {
 	dpmySvc := service.NewDepartmentService(dpmRepo)
 	dpmHdl := handler.NewDepartmentHandler(dpmySvc)
 
+	eqtRepo := repository.NewEquipmentTypeRepo()
+	eqtySvc := service.NewEquipmentTypeService(eqtRepo)
+	eqtHdl := handler.NewEquipmentTypeHandler(eqtySvc)
+
 	deps := &handler.Dependencies{
-		Factory:    factoryHdl,
-		Department: dpmHdl,
+		Factory:       factoryHdl,
+		Department:    dpmHdl,
+		EquipmentType: eqtHdl,
 	}
 
 	r := gin.Default()

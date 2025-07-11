@@ -5,12 +5,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// RegisterRoutes gom mọi group API vào 1 chỗ
 func RegisterRoutes(r *gin.Engine, deps *handler.Dependencies) {
-	// tạo nhóm /api
 	api := r.Group("/api")
 
-	// Equipment
 	FactoryRoutes(api, deps.Factory)
 	DepartmentRoutes(api, deps.Department)
+	EquipmentTypeRoutes(api, deps.EquipmentType)
 }

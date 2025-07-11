@@ -12,3 +12,5 @@ Docker:
     docker compose --build
     docker compose up --build -d
     docker compose down
+    docker compose stop
+    docker compose start

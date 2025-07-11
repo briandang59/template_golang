@@ -11,4 +11,5 @@ func RegisterRoutes(r *gin.Engine, deps *handler.Dependencies) {
 	FactoryRoutes(api, deps.Factory)
 	DepartmentRoutes(api, deps.Department)
 	EquipmentTypeRoutes(api, deps.EquipmentType)
+	EquipmentRoutes(api, deps.Equipment)
 }

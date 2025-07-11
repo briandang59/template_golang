@@ -8,4 +8,6 @@ import (
 func EquipmentTypeRoutes(rg *gin.RouterGroup, h *handler.EquipementTypeHandler) {
 	rg.GET("/equipment-types", h.GetAll)
 	rg.POST("/equipment-types", h.Create)
+	rg.PATCH("/equipment-types/:id", h.Update)
+	rg.DELETE("/equipment-types/:id", h.Delete)
 }

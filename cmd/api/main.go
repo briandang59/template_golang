@@ -41,10 +41,14 @@ func main() {
 	eqtySvc := service.NewEquipmentTypeService(eqtRepo)
 	eqtHdl := handler.NewEquipmentTypeHandler(eqtySvc)
 
+	eqRepo := repository.NewEquipmentRepo()
+	eqySvc := service.NewEquipmentService(eqRepo)
+	eqHdl := handler.NewEquipmentHandler(eqySvc)
 	deps := &handler.Dependencies{
 		Factory:       factoryHdl,
 		Department:    dpmHdl,
 		EquipmentType: eqtHdl,
+		Equipment:     eqHdl,
 	}
 
 	r := gin.Default()

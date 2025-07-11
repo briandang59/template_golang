@@ -14,7 +14,7 @@ type Equipment struct {
 	Code            string         `json:"code"`
 	Active          bool           `json:"active" gorm:"default:true"`
 	DepartmentID    uint           `json:"department_id"`
-	EquipmentTypeID uint           `json:"equipment_id"`
+	EquipmentTypeID uint           `json:"equipment_type_id"`
 	Department      *Department    `json:"department,omitempty" gorm:"foreignKey:DepartmentID"`
 	EquipmentType   *EquipmentType `json:"equipment_type,omitempty" gorm:"foreignKey:EquipmentTypeID"`
 	CreatedAt       time.Time      `json:"created_at"`

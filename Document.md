@@ -21,7 +21,7 @@ To build a comprehensive IT equipment management platform with the following fea
 - Real-time Communication: WebSocket
 
 ## 2️⃣ Module Architecture Diagram
-
+    
 ```mermaid
 graph LR
 A[Master Data Module (Factories, Departments, Personnel)] --> D[Asset Management Module]

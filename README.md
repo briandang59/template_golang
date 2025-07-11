@@ -250,6 +250,20 @@ DELETE  http://localhost:8080/api/equipment/:id
 
 ---
 
+# Server config
+PORT=8080
+GIN_MODE=release
+HOST=localhost
+
+# PostgreSQL DB config
+DB_HOST=db
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=123456
+DB_NAME=scada
+
+
+
 ## 🔮 Gợi ý mở rộng
 
 - Xác thực JWT

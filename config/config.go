@@ -38,12 +38,21 @@ func Init() {
 	autoMigrate()
 }
 
+func GetJWTSecret() string {
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		log.Fatal("🚫 JWT_SECRET không được để trống trong .env")
+	}
+	return secret
+}
+
 func autoMigrate() {
 	if err := DB.AutoMigrate(
 		&model.Factory{},
 		&model.Department{},
 		&model.EquipmentType{},
 		&model.Equipment{},
+		&model.Account{},
 	); err != nil {
 		log.Fatalf("🚫 AutoMigrate lỗi: %v", err)
 	}

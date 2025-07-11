@@ -44,11 +44,17 @@ func main() {
 	eqRepo := repository.NewEquipmentRepo()
 	eqySvc := service.NewEquipmentService(eqRepo)
 	eqHdl := handler.NewEquipmentHandler(eqySvc)
+
+	accountRepo := repository.NewAccountRepository()
+	authSvc := service.NewAuthService(accountRepo)
+	authHdl := handler.NewAuthHandler(authSvc)
+
 	deps := &handler.Dependencies{
 		Factory:       factoryHdl,
 		Department:    dpmHdl,
 		EquipmentType: eqtHdl,
 		Equipment:     eqHdl,
+		Account:       authHdl,
 	}
 
 	r := gin.Default()

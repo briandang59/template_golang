@@ -5,4 +5,5 @@ type Dependencies struct {
 	Department    *DepartmentHandler
 	EquipmentType *EquipementTypeHandler
 	Equipment     *EquipementHandler
+	Account       *AuthHandler
 }

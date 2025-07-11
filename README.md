@@ -251,16 +251,23 @@ DELETE  http://localhost:8080/api/equipment/:id
 ---
 
 # Server config
+
+```bash
 PORT=8080
 GIN_MODE=release
 HOST=localhost
+```
+
 
 # PostgreSQL DB config
+
+```bash
 DB_HOST=db
 DB_PORT=5432
 DB_USER=postgres
 DB_PASSWORD=123456
 DB_NAME=scada
+```
 
 
 

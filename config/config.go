@@ -53,6 +53,7 @@ func autoMigrate() {
 		&model.EquipmentType{},
 		&model.Equipment{},
 		&model.Account{},
+		&model.Personnel{},
 	); err != nil {
 		log.Fatalf("🚫 AutoMigrate lỗi: %v", err)
 	}

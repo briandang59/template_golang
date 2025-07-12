@@ -24,16 +24,18 @@ func NewEquipmentHandler(s *service.EquipmentService) *EquipementHandler {
 }
 
 // GetAll godoc
-// @Summary Get all equipment-types
-// @Description Get list of equipment-types with pagination
-// @Tags Equipment Types
+// @Summary Get all equipment
+// @Description Get list of equipment with pagination
+// @Tags Equipment
 // @Accept json
 // @Produce json
+// @Security BearerAuth
 // @Param page query int false "Page number"
 // @Param page_size query int false "Items per page"
 // @Success 200 {object} response.EquipmentListResponse
+// @Failure 401 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
-// @Router /equipment-types [get]
+// @Router /equipments [get]
 func (h *EquipementHandler) GetAll(c *gin.Context) {
 	page, _ := strconv.Atoi((c.DefaultQuery("page", "1")))
 	pageSize, _ := strconv.Atoi((c.DefaultQuery("page_size", "10")))
@@ -68,16 +70,18 @@ func (h *EquipementHandler) GetAll(c *gin.Context) {
 }
 
 // Create godoc
-// @Summary Create a new equipment type
-// @Description Create an equipment type with given payload
-// @Tags Equipment Types
+// @Summary Create a new equipment
+// @Description Create an equipment with given payload
+// @Tags Equipment
 // @Accept json
 // @Produce json
+// @Security BearerAuth
 // @Param body body model.Equipment true "Equipment data"
 // @Success 201 {object} response.EquipmentResponse
 // @Failure 400 {object} response.ErrorResponse
+// @Failure 401 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
-// @Router /equipment-types [post]
+// @Router /equipments [post]
 func (h *EquipementHandler) Create(c *gin.Context) {
 	var body model.Equipment
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -94,17 +98,19 @@ func (h *EquipementHandler) Create(c *gin.Context) {
 }
 
 // Update godoc
-// @Summary Update an equipment type (partial)
-// @Description Partially update an equipment type by ID
-// @Tags Equipment Types
+// @Summary Update an equipment (partial)
+// @Description Partially update an equipment by ID
+// @Tags Equipment
 // @Accept json
 // @Produce json
+// @Security BearerAuth
 // @Param id path int true "Equipment ID"
 // @Param body body object true "Partial update fields"
-// @Success 200 {object} response.EquipmentTypeResponse
+// @Success 200 {object} response.EquipmentResponse
 // @Failure 400 {object} response.ErrorResponse
+// @Failure 401 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
-// @Router /equipment-types/{id} [patch]
+// @Router /equipments/{id} [patch]
 func (h *EquipementHandler) Update(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 
@@ -129,14 +135,16 @@ func (h *EquipementHandler) Update(c *gin.Context) {
 }
 
 // Delete godoc
-// @Summary Delete an equipment type
-// @Description Delete an equipment type by ID
-// @Tags Equipment Types
+// @Summary Delete an equipment
+// @Description Delete an equipment by ID
+// @Tags Equipment
+// @Security BearerAuth
 // @Param id path int true "Equipment ID"
 // @Success 200 {object} model.Equipment
 // @Failure 400 {object} response.ErrorResponse
+// @Failure 401 {object} response.ErrorResponse
 // @Failure 404 {object} response.ErrorResponse
-// @Router /equipment-types/{id} [delete]
+// @Router /equipments/{id} [delete]
 func (h *EquipementHandler) Delete(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -159,9 +167,11 @@ func (h *EquipementHandler) Delete(c *gin.Context) {
 // @Tags Equipment
 // @Accept multipart/form-data
 // @Produce json
+// @Security BearerAuth
 // @Param file formData file true "CSV file to import"
-// @Success 200 {object} response.SuccessResponse{data=service.ImportResult}
+// @Success 200 {object} response.EquipmentImportResponse
 // @Failure 400 {object} response.ErrorResponse
+// @Failure 401 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
 // @Router /equipments/import [post]
 func (h *EquipementHandler) ImportFromCSV(c *gin.Context) {
@@ -215,7 +225,9 @@ func (h *EquipementHandler) ImportFromCSV(c *gin.Context) {
 // @Description Download a CSV template file with headers for equipment import
 // @Tags Equipment
 // @Produce text/csv
+// @Security BearerAuth
 // @Success 200 {file} file "CSV template file"
+// @Failure 401 {object} response.ErrorResponse
 // @Router /equipments/template [get]
 func (h *EquipementHandler) DownloadCSVTemplate(c *gin.Context) {
 	// CSV headers based on EquipmentCSV struct

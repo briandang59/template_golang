@@ -5,7 +5,7 @@ Create new swagger docs:
     swag init -g cmd/api/main.go
 
 Access swager:
-    http://localhost:8080/swagger/index.html
+    http://localhost:5000/swagger/index.html
     
 Docker:
     docker compose up -d

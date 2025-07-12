@@ -1,280 +1,140 @@
 # 🏭 SCADA Backend System
 
-Dự án backend hệ thống **SCADA** để quản lý thiết bị công nghiệp, cảnh báo trạng thái, và giao tiếp thời gian thực bằng **WebSocket**.
-
-## ✅ Tech Stack
-
-- 💻 Golang
-- 🛢️ PostgreSQL (qua Docker)
-- 🐋 Docker Compose
-- 📡 Gin (Web Framework)
-- 💬 WebSocket
-- 🔄 GORM (ORM)
-- 🔐 godotenv (quản lý biến môi trường)
+Dự án backend hệ thống **SCADA** quản lý thiết bị công nghiệp, cảnh báo trạng thái, và giao tiếp thời gian thực bằng **WebSocket**.
 
 ---
 
 ## 📁 Cấu trúc thư mục
 
-```bash
-be_scada/
-├── cmd/
-│   └── api/               # Entry point chính của backend
-│       └── main.go
-├── config/                # Load biến môi trường, khởi tạo DB
-│   └── config.go
+```
+SCADA/
+├── cmd/api/                 # Entry point chính của backend
+├── config/                  # Load biến môi trường, khởi tạo DB
 ├── internal/
-│   ├── model/             # Định nghĩa các struct (Entity DB)
-│   │   └── equipment.go
-│   ├── repository/        # Tầng truy vấn DB (CRUD)
-│   │   └── equipment_repo.go
-│   ├── service/           # Tầng xử lý logic nghiệp vụ
-│   │   └── equipment_service.go
+│   ├── model/               # Định nghĩa các struct (Entity DB)
+│   ├── repository/          # Tầng truy vấn DB (CRUD)
+│   ├── service/             # Tầng xử lý logic nghiệp vụ
 │   ├── http/
-│   │   ├── handler/       # Tầng xử lý request HTTP
-│   │   │   ├── equipment_handler.go
-│   │   │   └── dependencies.go
-│   │   └── routes/        # Tổ chức routing theo module
-│   │       └── equipment_routes.go
-│   └── websocket/         # Hub + client quản lý kết nối WebSocket
-│       └── websocket.go
-├── go.mod / go.sum        # Quản lý package
-├── .env                   # Thông tin kết nối DB (PORT, DSN, ...)
-├── Dockerfile             # Docker image build cho Golang
-├── docker-compose.yml     # Tạo network + Postgres + API
-└── README.md              # 📄 YOU ARE HERE
+│   │   ├── handler/         # Xử lý request HTTP
+│   │   ├── middleware/      # Middleware (auth, ...)
+│   │   ├── response/        # Định nghĩa response
+│   │   └── routes/          # Routing
+│   └── websocket/           # Quản lý WebSocket
+├── migrations/              # Migration DB
+├── utils/                   # Tiện ích chung
+├── docs/                    # Swagger docs (auto-gen)
+├── Dockerfile               # Docker build
+├── docker-compose.yml       # Docker Compose
+├── go.mod / go.sum          # Quản lý package
+├── .env                     # Thông tin kết nối DB, JWT
+├── README.md                # 📄 YOU ARE HERE
 ```
 
 ---
 
-## 📜 Giải thích các file chính
+## 🚀 Hướng dẫn chạy nhanh
 
-### `cmd/api/main.go` – điểm khởi chạy
-
-```go
-func main() {
-	_ = godotenv.Load()
-	config.Init()
-
-	eqRepo := repository.NewEquipmentRepo()
-	eqSvc := service.NewEquipmentService(eqRepo)
-	eqHdl := handler.NewEquipmentHandler(eqSvc)
-
-	deps := &handler.Dependencies{
-		Equipment: eqHdl,
-	}
-
-	r := gin.Default()
-
-	routes.RegisterRoutes(r, deps)
-
-	hub := ws.NewHub()
-	go hub.Run()
-	r.GET("/ws", ws.ServeWs(hub))
-
-	log.Fatal(r.Run(":" + os.Getenv("PORT")))
-}
-```
+1. **Cài đặt Go, Docker, PostgreSQL** (hoặc dùng docker-compose)
+2. **Tạo file `.env`** (xem ENVIRONMENT_SETUP.md)
+3. **Cài dependencies:**
+   ```bash
+   go mod download
+   ```
+4. **Tạo Swagger docs:**
+   ```bash
+   swag init -g cmd/api/main.go
+   ```
+5. **Chạy bằng Docker Compose:**
+   ```bash
+   docker-compose up --build
+   ```
+   Hoặc chạy local:
+   ```bash
+   go run ./cmd/api
+   ```
+6. **Truy cập Swagger UI:**
+   - [http://localhost:5000/swagger/index.html](http://localhost:5000/swagger/index.html)
 
 ---
 
-### `config/config.go` – khởi tạo DB GORM
+## 🔐 Hướng dẫn sử dụng Swagger với Token
 
-```go
-func Init() {
-    dsn := os.Getenv("DATABASE_URL")
-    db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-    if err != nil {
-        log.Fatalf("🚫 Không kết nối được DB: %v", err)
-    }
+1. **Đăng ký tài khoản:**
+   - `POST /auth/register` (không cần token)
+2. **Đăng nhập:**
+   - `POST /auth/login` (không cần token)
+   - Copy giá trị `token` trả về
+3. **Authorize trên Swagger:**
+   - Click nút "Authorize" (🔒)
+   - Nhập: `Bearer <token>`
+   - Click "Authorize" → "Close"
+4. **Test các API cần token:**
+   - Tất cả API `/api/*` đều yêu cầu JWT Bearer Token
 
-    DB = db
-    err = db.AutoMigrate(&model.Equipment{})
-}
-```
-
----
-
-### `model/equipment.go` – entity thiết bị
-
-```go
-type Equipment struct {
-	ID          uint           `json:"id"`
-	Name        string         `json:"name"        gorm:"size:100;not null"`
-	Location    string         `json:"location"    gorm:"size:50"`
-	Status      string         `json:"status"      gorm:"size:20"`
-	Description string         `json:"description" gorm:"type:text"`
-	CreatedAt   time.Time      `json:"created_at"`
-	UpdatedAt   time.Time      `json:"updated_at"`
-	DeletedAt   gorm.DeletedAt `json:"-"           gorm:"index"`
-}
-
-```
+> **Lưu ý:** Nếu vẫn bị lỗi 401, hãy kiểm tra lại:
+> - Đã nhập đúng `Bearer <token>` chưa?
+> - Token còn hạn không?
+> - Đã build lại project và tạo lại Swagger docs chưa?
+> - Đã bật CORS middleware chưa?
 
 ---
 
-### `repository/equipment_repo.go`
+## 🧩 Các tính năng đã có
 
-```go
-func (r *EquipmentRepo) FindAllPaginate(page, size int) ([]model.Equipment, int64, error) {
-    var list []model.Equipment
-    var total int64
-    r.db.Model(&model.Equipment{}).Count(&total)
-    r.db.Offset((page-1)*size).Limit(size).Find(&list)
-    return list, total, nil
-}
-```
-
----
-
-### `service/equipment_service.go`
-
-```go
-func (s *EquipmentService) GetAllPaginate(page, size int) ([]model.Equipment, int64, error) {
-    return s.repo.FindAllPaginate(page, size)
-}
-```
+- [x] Đăng ký/Đăng nhập, sinh JWT token
+- [x] CRUD thiết bị (equipment), loại thiết bị, phòng ban, nhân sự, nhà máy
+- [x] Import thiết bị từ file CSV (UTF-8)
+- [x] Download template CSV
+- [x] Swagger UI với JWT Bearer Token
+- [x] Middleware bảo vệ tất cả API `/api/*`
+- [x] WebSocket real-time
+- [x] Docker/Docker Compose support
+- [x] Migration tự động
+- [x] Hướng dẫn chi tiết (CSV_IMPORT_GUIDE.md, SWAGGER_AUTH_GUIDE.md, ENVIRONMENT_SETUP.md)
 
 ---
 
-### `handler/equipment_handler.go`
+## 🚧 Feature đề xuất cho tương lai
 
-```go
-func (h *EquipmentHandler) GetAll(c *gin.Context) {
-    page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
-    size, _ := strconv.Atoi(c.DefaultQuery("size", "10"))
-
-    data, total, err := h.svc.GetAllPaginate(page, size)
-    if err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"code": 500, "message": err.Error()})
-        return
-    }
-
-    c.JSON(http.StatusOK, gin.H{
-        "code":    200,
-        "message": "Success",
-        "data":    data,
-        "pagination": gin.H{
-            "page":      page,
-            "page_size": size,
-            "total":     total,
-        },
-    })
-}
-```
+- [ ] RBAC (Role-Based Access Control) - phân quyền chi tiết
+- [ ] Lịch sử thao tác (audit log)
+- [ ] Notification real-time qua WebSocket
+- [ ] API quản lý cảnh báo (alert)
+- [ ] API thống kê, dashboard
+- [ ] API upload/download file đính kèm
+- [ ] Đa ngôn ngữ (i18n)
+- [ ] Unit test & integration test
+- [ ] CI/CD pipeline
+- [ ] Health check endpoint
+- [ ] API rate limiting
+- [ ] Export dữ liệu ra Excel/PDF
 
 ---
 
-### `websocket/websocket.go` – WebSocket Hub
+## 📝 Tài liệu tham khảo
 
-```go
-type Hub struct {
-    clients    map[*Client]bool
-    broadcast  chan []byte
-    register   chan *Client
-    unregister chan *Client
-}
-
-func (h *Hub) Run() {
-    for {
-        select {
-        case client := <-h.register:
-            h.clients[client] = true
-        case message := <-h.broadcast:
-            for client := range h.clients {
-                client.send <- message
-            }
-        }
-    }
-}
-```
+- [CSV_IMPORT_GUIDE.md](./CSV_IMPORT_GUIDE.md) - Hướng dẫn import CSV
+- [SWAGGER_AUTH_GUIDE.md](./SWAGGER_AUTH_GUIDE.md) - Hướng dẫn sử dụng Swagger với token
+- [ENVIRONMENT_SETUP.md](./ENVIRONMENT_SETUP.md) - Hướng dẫn cấu hình môi trường
+- [IMPLEMENTATION_SUMMARY.md](./IMPLEMENTATION_SUMMARY.md) - Tóm tắt các thay đổi
 
 ---
 
-## 🐋 Dockerfile
+## 🐛 Troubleshooting
 
-```dockerfile
-FROM golang:1.24-alpine AS builder
-WORKDIR /app
-COPY go.mod go.sum ./
-RUN go mod download
-COPY . .
-RUN go build -o be_scada ./cmd/api
-
-FROM alpine:latest
-WORKDIR /app
-COPY --from=builder /app/be_scada .
-COPY .env .
-CMD ["./be_scada"]
-```
+- **Lỗi 401 khi test API trên Swagger:**
+  - Đảm bảo đã nhập đúng `Bearer <token>` khi Authorize
+  - Đảm bảo token còn hạn
+  - Đảm bảo đã build lại project và tạo lại Swagger docs
+  - Đảm bảo CORS middleware đã bật
+- **Lỗi encoding khi import CSV:**
+  - File phải là UTF-8, không phải ANSI/UTF-16
+- **Lỗi foreign key khi import CSV:**
+  - Các ID (department_id, equipment_type_id, ...) phải tồn tại trong DB
 
 ---
 
-## 🛠️ docker-compose.yml
+## 💡 Đóng góp & phát triển
 
-```yaml
-services:
-  db:
-    image: postgres:16
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_PASSWORD: 123456
-    volumes:
-      - scada_pg-data:/var/lib/postgresql/data
-
-  backend:
-    build:
-      context: .
-    ports:
-      - "8080:8080"
-    depends_on:
-      - db
-    env_file:
-      - .env
-
-volumes:
-  scada_pg-data:
-```
-
----
-
-## 🧪 Test API
-
-```bash
-GET     http://localhost:8080/api/equipment
-POST    http://localhost:8080/api/equipment
-PUT     http://localhost:8080/api/equipment/:id
-DELETE  http://localhost:8080/api/equipment/:id
-```
-
----
-
-# Server config
-
-```bash
-PORT=8080
-GIN_MODE=release
-HOST=localhost
-```
-
-
-# PostgreSQL DB config
-
-```bash
-DB_HOST=db
-DB_PORT=5432
-DB_USER=postgres
-DB_PASSWORD=123456
-DB_NAME=scada
-```
-
-
-
-## 🔮 Gợi ý mở rộng
-
-- Xác thực JWT
-- Module Users, Alerts, Work Orders
-- Export CSV/Excel
-- Giao tiếp MQTT với thiết bị
+- Fork, tạo PR hoặc mở issue để đóng góp ý tưởng, báo lỗi hoặc đề xuất tính năng mới!
 

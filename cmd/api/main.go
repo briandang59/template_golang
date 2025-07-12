@@ -1,9 +1,13 @@
 // @title SCADA API
 // @version 1.0
-// @description This is a SCADA system backend.
-// @host localhost:8080/api
-// @BasePath /
-// @schemes http
+// @description This is a SCADA system backend for industrial equipment management.
+// @host localhost:5000
+// @BasePath /api
+// @schemes http https
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token.
 package main
 
 import (
@@ -63,6 +67,20 @@ func main() {
 	}
 
 	r := gin.Default()
+
+	// Add CORS middleware for Swagger UI
+	r.Use(func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
+		c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+		
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+		
+		c.Next()
+	})
 
 	routes.RegisterRoutes(r, deps)
 

@@ -1,5 +1,24 @@
-basePath: /
+basePath: /api
 definitions:
+  model.Account:
+    properties:
+      active:
+        type: boolean
+      created_at:
+        type: string
+      id:
+        type: integer
+      password:
+        type: string
+      roles:
+        items:
+          $ref: '#/definitions/model.Role'
+        type: array
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
   model.Department:
     properties:
       active:
@@ -23,6 +42,71 @@ definitions:
       name_zh:
         type: string
       updated_at:
+        type: string
+    type: object
+  model.Equipment:
+    properties:
+      active:
+        type: boolean
+      assigned_user:
+        $ref: '#/definitions/model.Personnel'
+      assigned_user_id:
+        type: integer
+      code:
+        type: string
+      created_at:
+        type: string
+      department:
+        $ref: '#/definitions/model.Department'
+      department_id:
+        type: integer
+      description:
+        type: string
+      equipment_type:
+        $ref: '#/definitions/model.EquipmentType'
+      equipment_type_id:
+        type: integer
+      id:
+        type: integer
+      installation_date:
+        type: string
+      ip_address:
+        type: string
+      last_maintenance_date:
+        type: string
+      location:
+        type: string
+      mac_address:
+        type: string
+      manufacturer:
+        type: string
+      model:
+        type: string
+      name_en:
+        type: string
+      name_vn:
+        type: string
+      name_zh:
+        type: string
+      next_maintenance_date:
+        type: string
+      notes:
+        type: string
+      operating_system:
+        type: string
+      purchase_date:
+        type: string
+      responsible_user:
+        $ref: '#/definitions/model.Personnel'
+      responsible_user_id:
+        type: integer
+      serial_number:
+        type: string
+      status:
+        type: string
+      updated_at:
+        type: string
+      warranty_end_date:
         type: string
     type: object
   model.EquipmentType:
@@ -71,6 +155,75 @@ definitions:
       updated_at:
         type: string
     type: object
+  model.Permission:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name_en:
+        type: string
+      name_vn:
+        type: string
+      name_zh:
+        type: string
+      tag:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.Personnel:
+    properties:
+      account:
+        $ref: '#/definitions/model.Account'
+      account_id:
+        type: integer
+      created_at:
+        type: string
+      department:
+        $ref: '#/definitions/model.Department'
+      department_id:
+        type: integer
+      email:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: integer
+      phone:
+        type: string
+      updated_at:
+        type: string
+      work_place:
+        items:
+          $ref: '#/definitions/model.Factory'
+        type: array
+    type: object
+  model.Role:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name_en:
+        type: string
+      name_vn:
+        type: string
+      name_zh:
+        type: string
+      permissions:
+        items:
+          $ref: '#/definitions/model.Permission'
+        type: array
+      tag:
+        type: string
+      updated_at:
+        type: string
+    type: object
   response.Body:
     properties:
       code:
@@ -107,6 +260,106 @@ definitions:
         $ref: '#/definitions/model.Factory'
       message:
         example: success
+        type: string
+    type: object
+  response.EquipmentImportResponse:
+    properties:
+      created:
+        items:
+          $ref: '#/definitions/response.EquipmentResponseData'
+        type: array
+      errors:
+        items:
+          type: string
+        type: array
+      failed:
+        type: integer
+      success:
+        type: integer
+      total:
+        type: integer
+    type: object
+  response.EquipmentListResponse:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/model.Equipment'
+        type: array
+      message:
+        example: success
+        type: string
+      pagination:
+        $ref: '#/definitions/response.Pagination'
+    type: object
+  response.EquipmentResponse:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        $ref: '#/definitions/model.Equipment'
+      message:
+        example: success
+        type: string
+    type: object
+  response.EquipmentResponseData:
+    properties:
+      active:
+        type: boolean
+      assigned_user_id:
+        type: integer
+      code:
+        type: string
+      created_at:
+        type: string
+      department_id:
+        type: integer
+      description:
+        type: string
+      equipment_type_id:
+        type: integer
+      id:
+        type: integer
+      installation_date:
+        type: string
+      ip_address:
+        type: string
+      last_maintenance_date:
+        type: string
+      location:
+        type: string
+      mac_address:
+        type: string
+      manufacturer:
+        type: string
+      model:
+        type: string
+      name_en:
+        type: string
+      name_vn:
+        type: string
+      name_zh:
+        type: string
+      next_maintenance_date:
+        type: string
+      notes:
+        type: string
+      operating_system:
+        type: string
+      purchase_date:
+        type: string
+      responsible_user_id:
+        type: integer
+      serial_number:
+        type: string
+      status:
+        type: string
+      updated_at:
+        type: string
+      warranty_end_date:
         type: string
     type: object
   response.EquipmentTypeListResponse:
@@ -182,13 +435,105 @@ definitions:
         example: 100
         type: integer
     type: object
-host: localhost:8080/api
+  response.PersonnelListResponse:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/model.Personnel'
+        type: array
+      message:
+        example: success
+        type: string
+      pagination:
+        $ref: '#/definitions/response.Pagination'
+    type: object
+  response.PersonnelResponse:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        $ref: '#/definitions/model.Personnel'
+      message:
+        example: success
+        type: string
+    type: object
+host: localhost:5000
 info:
   contact: {}
-  description: This is a SCADA system backend.
+  description: This is a SCADA system backend for industrial equipment management.
   title: SCADA API
   version: "1.0"
 paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return JWT token
+      parameters:
+      - description: Login credentials
+        in: body
+        name: body
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              token:
+                type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Login user
+      tags:
+      - Authentication
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user account
+      parameters:
+      - description: Registration data
+        in: body
+        name: body
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            properties:
+              message:
+                type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Register a new user
+      tags:
+      - Authentication
   /departments:
     get:
       consumes:
@@ -421,6 +766,200 @@ paths:
       summary: Update an equipment type (partial)
       tags:
       - Equipment Types
+  /equipments:
+    get:
+      consumes:
+      - application/json
+      description: Get list of equipment with pagination
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.EquipmentListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get all equipment
+      tags:
+      - Equipment
+    post:
+      consumes:
+      - application/json
+      description: Create an equipment with given payload
+      parameters:
+      - description: Equipment data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.Equipment'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.EquipmentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new equipment
+      tags:
+      - Equipment
+  /equipments/{id}:
+    delete:
+      description: Delete an equipment by ID
+      parameters:
+      - description: Equipment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Equipment'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete an equipment
+      tags:
+      - Equipment
+    patch:
+      consumes:
+      - application/json
+      description: Partially update an equipment by ID
+      parameters:
+      - description: Equipment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Partial update fields
+        in: body
+        name: body
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.EquipmentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update an equipment (partial)
+      tags:
+      - Equipment
+  /equipments/import:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Import multiple equipment records from a CSV file
+      parameters:
+      - description: CSV file to import
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.EquipmentImportResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Import equipment from CSV file
+      tags:
+      - Equipment
+  /equipments/template:
+    get:
+      description: Download a CSV template file with headers for equipment import
+      produces:
+      - text/csv
+      responses:
+        "200":
+          description: CSV template file
+          schema:
+            type: file
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Download CSV template for equipment import
+      tags:
+      - Equipment
   /factories:
     get:
       consumes:
@@ -537,6 +1076,105 @@ paths:
       summary: Update a factory (partial)
       tags:
       - Factory
+  /personnels:
+    get:
+      consumes:
+      - application/json
+      description: Get list of personnels with pagination
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.PersonnelListResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Get all personnels
+      tags:
+      - Personnel
+    post:
+      consumes:
+      - application/json
+      description: Create a personnel with given payload
+      parameters:
+      - description: personnel Data
+        in: body
+        name: personnel
+        required: true
+        schema:
+          $ref: '#/definitions/model.Personnel'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.PersonnelResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Create a new personnel
+      tags:
+      - Personnel
+  /personnels/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Update a personnel partially by ID
+      parameters:
+      - description: personnel ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Partial update fields
+        in: body
+        name: body
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.PersonnelResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Update a personnel (partial)
+      tags:
+      - Personnel
 schemes:
 - http
+- https
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

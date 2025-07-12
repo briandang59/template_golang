@@ -17,7 +17,17 @@ func NewAuthHandler(authService service.AuthService) *AuthHandler {
 	}
 }
 
-// ✅ Đăng ký
+// Register godoc
+// @Summary Register a new user
+// @Description Register a new user account
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param body body object true "Registration data" schema="{username:string,password:string}"
+// @Success 200 {object} object{message=string}
+// @Failure 400 {object} response.ErrorResponse
+// @Failure 409 {object} response.ErrorResponse
+// @Router /auth/register [post]
 func (h *AuthHandler) Register(c *gin.Context) {
 	var req struct {
 		Username string `json:"username" binding:"required"`
@@ -37,7 +47,17 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "registered successfully"})
 }
 
-// ✅ Đăng nhập
+// Login godoc
+// @Summary Login user
+// @Description Authenticate user and return JWT token
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param body body object true "Login credentials" schema="{username:string,password:string}"
+// @Success 200 {object} object{token=string}
+// @Failure 400 {object} response.ErrorResponse
+// @Failure 401 {object} response.ErrorResponse
+// @Router /auth/login [post]
 func (h *AuthHandler) Login(c *gin.Context) {
 	var req struct {
 		Username string `json:"username" binding:"required"`

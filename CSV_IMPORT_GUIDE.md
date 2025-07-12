@@ -62,7 +62,7 @@ Ví dụ: `2023-01-15T00:00:00Z`
 
 ### Bước 1: Tải template
 ```bash
-curl -X GET "http://localhost:8080/api/equipments/template" \
+curl -X GET "http://localhost:5000/api/equipments/template" \
   -H "Content-Type: application/json" \
   --output equipment_template.csv
 ```
@@ -75,7 +75,7 @@ curl -X GET "http://localhost:8080/api/equipments/template" \
 
 ### Bước 3: Upload file
 ```bash
-curl -X POST "http://localhost:8080/api/equipments/import" \
+curl -X POST "http://localhost:5000/api/equipments/import" \
   -H "Content-Type: multipart/form-data" \
   -F "file=@your_equipment_data.csv"
 ```

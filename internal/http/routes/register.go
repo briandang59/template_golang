@@ -7,7 +7,7 @@ import (
 )
 
 func RegisterRoutes(r *gin.Engine, deps *handler.Dependencies) {
-	auth := r.Group("/auth")
+	auth := r.Group("/api/auth")
 	api := r.Group("/api", middleware.AuthMiddleware())
 
 	AuthRoutes(auth, deps.Account)

@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/briandang59/be_scada/internal/dto"
 	"github.com/briandang59/be_scada/internal/http/response"
 	"github.com/briandang59/be_scada/internal/model"
 	"github.com/briandang59/be_scada/internal/service"
@@ -37,7 +38,6 @@ func (h *EquipementHandler) GetAll(c *gin.Context) {
 	if page < 1 {
 		page = 1
 	}
-
 	if pageSize < 1 {
 		pageSize = 10
 	}
@@ -45,13 +45,19 @@ func (h *EquipementHandler) GetAll(c *gin.Context) {
 	preloadFields := utils.ParsePopulateQuery(c.Request.URL.Query())
 
 	list, total, err := h.svc.GetAll(page, pageSize, preloadFields)
-
 	if err != nil {
 		response.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	response.Success(c, list, &response.Pagination{
+	ptrList := make([]*model.Equipment, len(list))
+	for i := range list {
+		ptrList[i] = &list[i]
+	}
+
+	res := dto.ToEquipmentResponseList(ptrList)
+
+	response.Success(c, res, &response.Pagination{
 		Page:     page,
 		PageSize: pageSize,
 		Total:    int(total),

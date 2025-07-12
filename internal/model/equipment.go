@@ -11,8 +11,8 @@ type Equipment struct {
 	NameEn              string     `json:"name_en"`
 	NameZh              string     `json:"name_zh"`
 	NameVn              string     `json:"name_vn"`
-	Code                string     `json:"code" gorm:"unique;not null"`
-	SerialNumber        string     `json:"serial_number" gorm:"unique"`
+	Code                string     `json:"code"`
+	SerialNumber        string     `json:"serial_number" `
 	Model               string     `json:"model"`
 	Manufacturer        string     `json:"manufacturer"`
 	Location            string     `json:"location"`
@@ -27,6 +27,7 @@ type Equipment struct {
 	Notes               string     `json:"notes"`
 	LastMaintenanceDate *time.Time `json:"last_maintenance_date"`
 	NextMaintenanceDate *time.Time `json:"next_maintenance_date"`
+	Active              bool       `json:"active" gorm:"default:true;not null"`
 
 	DepartmentID      uint  `json:"department_id"`
 	EquipmentTypeID   uint  `json:"equipment_type_id"`

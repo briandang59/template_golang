@@ -49,12 +49,17 @@ func main() {
 	authSvc := service.NewAuthService(accountRepo)
 	authHdl := handler.NewAuthHandler(authSvc)
 
+	psnRepo := repository.NewPersonnelRepository()
+	psnSvc := service.NewPersonnelService(psnRepo)
+	psnHdl := handler.NewPersonnelHandler(psnSvc)
+
 	deps := &handler.Dependencies{
 		Factory:       factoryHdl,
 		Department:    dpmHdl,
 		EquipmentType: eqtHdl,
 		Equipment:     eqHdl,
 		Account:       authHdl,
+		Personnel:     psnHdl,
 	}
 
 	r := gin.Default()

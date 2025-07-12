@@ -12,9 +12,9 @@ func RegisterRoutes(r *gin.Engine, deps *handler.Dependencies) {
 
 	AuthRoutes(auth, deps.Account)
 
-	// Routes cần đăng nhập
 	FactoryRoutes(api, deps.Factory)
 	DepartmentRoutes(api, deps.Department)
 	EquipmentTypeRoutes(api, deps.EquipmentType)
 	EquipmentRoutes(api, deps.Equipment)
+	PersonnelRoutes(api, deps.Personnel)
 }

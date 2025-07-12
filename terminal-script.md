@@ -14,3 +14,5 @@ Docker:
     docker compose down
     docker compose stop
     docker compose start
+    docker volume ls
+    docker volume rm my_volume

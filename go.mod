@@ -13,6 +13,8 @@ require (
 	gorm.io/gorm v1.30.0
 )
 
+require github.com/gocarina/gocsv v0.0.0-20240520201108-78e41c74b4b1 // indirect
+
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect

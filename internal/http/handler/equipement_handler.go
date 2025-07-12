@@ -1,8 +1,11 @@
 package handler
 
 import (
+	"encoding/csv"
+	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/briandang59/be_scada/internal/dto"
 	"github.com/briandang59/be_scada/internal/http/response"
@@ -148,4 +151,110 @@ func (h *EquipementHandler) Delete(c *gin.Context) {
 	}
 
 	response.Success(c, deletedEquipmentType, nil)
+}
+
+// ImportFromCSV godoc
+// @Summary Import equipment from CSV file
+// @Description Import multiple equipment records from a CSV file
+// @Tags Equipment
+// @Accept multipart/form-data
+// @Produce json
+// @Param file formData file true "CSV file to import"
+// @Success 200 {object} response.SuccessResponse{data=service.ImportResult}
+// @Failure 400 {object} response.ErrorResponse
+// @Failure 500 {object} response.ErrorResponse
+// @Router /equipments/import [post]
+func (h *EquipementHandler) ImportFromCSV(c *gin.Context) {
+	// Get uploaded file
+	file, err := c.FormFile("file")
+	if err != nil {
+		response.Error(c, http.StatusBadRequest, "No file uploaded or invalid file")
+		return
+	}
+
+	// Validate file type
+	if file.Header.Get("Content-Type") != "text/csv" && 
+	   file.Header.Get("Content-Type") != "application/vnd.ms-excel" &&
+	   file.Header.Get("Content-Type") != "application/octet-stream" {
+		// Check file extension as fallback
+		if !strings.HasSuffix(file.Filename, ".csv") {
+			response.Error(c, http.StatusBadRequest, "File must be a CSV file")
+			return
+		}
+	}
+
+	// Open file
+	src, err := file.Open()
+	if err != nil {
+		response.Error(c, http.StatusInternalServerError, fmt.Sprintf("Failed to open file: %s", err.Error()))
+		return
+	}
+	defer src.Close()
+
+	// Import CSV
+	result, err := h.svc.ImportFromCSV(src)
+	if err != nil {
+		response.Error(c, http.StatusInternalServerError, fmt.Sprintf("Failed to import CSV: %s", err.Error()))
+		return
+	}
+
+	// Convert to response DTO
+	importResponse := response.ToEquipmentImportResponse(
+		result.Total,
+		result.Success,
+		result.Failed,
+		result.Errors,
+		result.Created,
+	)
+
+	response.Success(c, importResponse, nil)
+}
+
+// DownloadCSVTemplate godoc
+// @Summary Download CSV template for equipment import
+// @Description Download a CSV template file with headers for equipment import
+// @Tags Equipment
+// @Produce text/csv
+// @Success 200 {file} file "CSV template file"
+// @Router /equipments/template [get]
+func (h *EquipementHandler) DownloadCSVTemplate(c *gin.Context) {
+	// CSV headers based on EquipmentCSV struct
+	headers := []string{
+		"name_en", "name_zh", "name_vn", "code", "serial_number", "model", "manufacturer",
+		"location", "purchase_date", "warranty_end_date", "installation_date", "status",
+		"ip_address", "mac_address", "operating_system", "description", "notes",
+		"last_maintenance_date", "next_maintenance_date", "department_id", "equipment_type_id",
+		"responsible_user_id", "assigned_user_id",
+	}
+
+	// Sample data row
+	sampleRow := []string{
+		"Production Web Server 01", "生产网络服务器01", "Máy chủ Web Sản xuất 01",
+		"SERVER-PROD-WEB-001", "SN1234567890ABC", "Dell PowerEdge R740", "Dell",
+		"Server Room A, Rack 2, Unit 1-2", "2023-01-15T00:00:00Z", "2026-01-15T00:00:00Z",
+		"2023-01-20T00:00:00Z", "active", "192.168.1.10", "00:1A:2B:3C:4D:5E",
+		"Ubuntu Server 22.04 LTS", "Primary web server for production environment",
+		"Configured with redundant power supplies", "2024-12-01T00:00:00Z", "2025-03-01T00:00:00Z",
+		"1", "1", "1", "1",
+	}
+
+	// Set response headers
+	c.Header("Content-Type", "text/csv")
+	c.Header("Content-Disposition", "attachment; filename=equipment_template.csv")
+
+	// Write CSV content
+	writer := csv.NewWriter(c.Writer)
+	defer writer.Flush()
+
+	// Write headers
+	if err := writer.Write(headers); err != nil {
+		response.Error(c, http.StatusInternalServerError, "Failed to write CSV headers")
+		return
+	}
+
+	// Write sample row
+	if err := writer.Write(sampleRow); err != nil {
+		response.Error(c, http.StatusInternalServerError, "Failed to write CSV sample data")
+		return
+	}
 }

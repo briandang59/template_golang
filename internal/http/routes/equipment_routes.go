@@ -7,7 +7,9 @@ import (
 
 func EquipmentRoutes(rg *gin.RouterGroup, h *handler.EquipementHandler) {
 	rg.GET("/equipments", h.GetAll)
+	rg.GET("/equipments/template", h.DownloadCSVTemplate)
 	rg.POST("/equipments", h.Create)
+	rg.POST("/equipments/import", h.ImportFromCSV)
 	rg.PATCH("/equipments/:id", h.Update)
 	rg.DELETE("/equipments/:id", h.Delete)
 }

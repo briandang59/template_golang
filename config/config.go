@@ -34,7 +34,7 @@ func Init() {
 	DB = db
 	log.Println("✅ Đã kết nối PostgreSQL")
 
-	// Auto‑migrate tất cả model cần thiết
+	// Auto‑migrate tất cả model cần thiết a
 	autoMigrate()
 }
 

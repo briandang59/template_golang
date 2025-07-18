@@ -4,7 +4,7 @@ services:
     build: .
     container_name: be_scada_api
     ports:
-      - "5000:5000"
+      - "5959:5959"
     env_file: .env
     depends_on:
       - db
@@ -19,7 +19,7 @@ services:
     volumes:
       - pg-data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5960:5960"
 
 volumes:
   pg-data:

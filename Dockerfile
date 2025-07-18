@@ -14,5 +14,5 @@ WORKDIR /app
 COPY --from=builder /app/be_scada .
 COPY .env .
 
-EXPOSE 5000
+EXPOSE 5959
 CMD ["./be_scada"]
